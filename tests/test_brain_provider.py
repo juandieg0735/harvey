@@ -228,6 +228,35 @@ async def test_claude_preflight_sends_no_prompt(state, monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_claude_pause_from_before_a_restart_clears_once_the_cli_is_found(state, monkeypatch):
+    """The operator fixes PATH and restarts Harvey: the new process finds the
+    CLI, so the pause the old one stored stops showing on the dashboard."""
+    import json
+    import harvey.claude_runtime as cr
+    await state.set_setting(brain_mod.BRAIN_STATUS_KEY, json.dumps({
+        "provider": "claude", "status": "paused", "kind": "setup",
+        "reason": "Claude CLI not found on PATH."}))
+    monkeypatch.setattr(cr, "check_cli", lambda env=None: "/usr/local/bin/claude")
+
+    assert await Brain(state).preflight() == ""
+    stored = json.loads(await state.get_setting(brain_mod.BRAIN_STATUS_KEY))
+    assert stored["status"] == "ok"
+
+
+@pytest.mark.asyncio
+async def test_claude_preflight_leaves_a_usage_limit_pause_alone(state, monkeypatch):
+    import json
+    import harvey.claude_runtime as cr
+    paused = json.dumps({"provider": "claude", "status": "paused", "kind": "usage_limit",
+                         "reason": "Claude usage limit reached for this plan."})
+    await state.set_setting(brain_mod.BRAIN_STATUS_KEY, paused)
+    monkeypatch.setattr(cr, "check_cli", lambda env=None: "/usr/local/bin/claude")
+
+    assert await Brain(state).preflight() == ""
+    assert await state.get_setting(brain_mod.BRAIN_STATUS_KEY) == paused
+
+
+@pytest.mark.asyncio
 async def test_codex_pause_is_sticky_until_the_login_or_cli_changes(state):
     import json
     brain = _codex_brain(state, [])

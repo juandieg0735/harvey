@@ -191,6 +191,18 @@ class Brain:
             return self.unavailable
         if self.unavailable:
             await self._mark_available()
+        elif not self._status_synced:
+            # A pause recorded before a restart must not outlive the problem
+            # (the operator fixed PATH, then restarted Harvey). A usage-limit
+            # pause isn't this check's to clear.
+            self._status_synced = True
+            try:
+                stored = parse_brain_status(await self.state.get_setting(BRAIN_STATUS_KEY))
+            except Exception:
+                stored = {}
+            if (stored.get("provider") == "claude" and stored.get("status") == "paused"
+                    and stored.get("kind") != "usage_limit"):
+                await self._mark_available()
         return ""
 
     def _fingerprint(self):

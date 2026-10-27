@@ -212,6 +212,13 @@ minor versions can still change behaviour.
 
 ### Fixed
 
+- **A fixed Claude CLI clears the dashboard's "paused" banner.** If Harvey
+  once couldn't find `claude` on PATH, the pause it stored outlived the fix:
+  after the operator installed the CLI or fixed PATH and restarted Harvey,
+  the new process found the CLI and ran, but the dashboard kept saying
+  "Harvey's model is paused". Claude's preflight now clears a pause recorded
+  before a restart once its CLI check passes, as Codex's already did. A
+  usage-limit pause is left to run out on its own.
 - **Replies remember the whole conversation** (closes #97). A reply was
   written from the last six messages only, so a requirement the prospect
   stated earlier ("synthetic data only, processed in the EU") dropped out
