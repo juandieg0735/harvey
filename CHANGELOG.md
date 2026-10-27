@@ -219,6 +219,11 @@ minor versions can still change behaviour.
   "Harvey's model is paused". Claude's preflight now clears a pause recorded
   before a restart once its CLI check passes, as Codex's already did. A
   usage-limit pause is left to run out on its own.
+- **Scout's free web search finds companies again when `company_size` is
+  set.** Its fallback query quoted the size range (`"10-200 employees"`),
+  which almost no business's own site says, so DuckDuckGo and Bing returned
+  nothing useful. The range now stays out of the query; size still counts
+  when prospects are scored.
 - **Replies remember the whole conversation** (closes #97). A reply was
   written from the last six messages only, so a requirement the prospect
   stated earlier ("synthetic data only, processed in the EU") dropped out

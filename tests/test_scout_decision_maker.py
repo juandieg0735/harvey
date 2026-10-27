@@ -427,3 +427,18 @@ async def test_scout_search_web_uses_tinyfish_backend():
     assert called == [("tinyfish", "Denver roofers", "tf_key")]
     assert len(results) == 1
     assert results[0][0] == "https://summit.example"
+
+
+# ── web-search fallback queries ──
+
+def test_company_search_queries_leave_the_size_range_out():
+    """A quoted "10-200 employees" matches almost no business's own site, so
+    the free search fallback found nothing whenever company_size was set."""
+    config = SimpleNamespace(icp=SimpleNamespace(
+        industries=["roofing contractor"], geography=["Springfield, IL"],
+        company_size="10-200 employees", titles=[]))
+    scout = Scout(brain=None, state=FakeState(), config=config, env=SimpleNamespace())
+    queries = scout._build_company_search_queries()
+    assert queries == ['"roofing contractor" "Springfield, IL" company',
+                       'top "roofing contractor" companies Springfield, IL']
+    assert not any("employees" in q for q in queries)

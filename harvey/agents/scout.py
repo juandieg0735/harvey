@@ -1131,8 +1131,10 @@ class Scout:
         queries = []
         industries = self.config.icp.industries or [""]
         geos = self.config.icp.geography or [""]
-        size = self.config.icp.company_size or ""
 
+        # company_size stays out of the query: a business's own site almost
+        # never says "10-200 employees", so quoting it matched nothing. Size
+        # is judged later, when the prospect is scored.
         for industry in industries[:2]:
             geo = geos[0] if geos else ""
 
@@ -1141,8 +1143,6 @@ class Scout:
                 parts.append(f'"{industry}"')
             if geo:
                 parts.append(f'"{geo}"')
-            if size:
-                parts.append(f'"{size}"')
             parts.append("company")
             queries.append(" ".join(parts))
 
