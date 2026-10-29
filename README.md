@@ -149,6 +149,21 @@ harvey dashboard          # prints a private link to http://127.0.0.1:5555
 harvey run
 ```
 
+### On Windows: no terminal windows to babysit
+
+`harvey dashboard` and `harvey run` each hold a PowerShell window open, and
+closing one stops it. `scripts\windows\` has double-click launchers instead:
+
+| File | What it does |
+|---|---|
+| `Start Harvey.cmd` | Starts the dashboard and Harvey in the background and opens the dashboard. Anything already running is left alone. |
+| `Stop Harvey.cmd` | Stops both. Queued emails and everything Harvey found stay in `data\harvey.db`. |
+| `Start Harvey at sign-in.cmd` | Adds a Startup shortcut so Harvey starts whenever you sign in (no admin rights). Run `install-autostart.ps1 -Remove` to undo. |
+
+Harvey's output goes to `data\harvey.log`, which the dashboard's Activity log
+shows. It works only while the computer is on and awake, so keep it from
+sleeping while Harvey should be prospecting and sending.
+
 ---
 
 ## You confirm what it looks for

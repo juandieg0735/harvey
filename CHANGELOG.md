@@ -9,6 +9,12 @@ minor versions can still change behaviour.
 
 ### Added
 
+- **Windows launchers.** `scripts\windows\` has double-click files to start
+  Harvey (dashboard and heartbeat loop, in the background, then opens the
+  dashboard), stop it, and start it whenever you sign in. No PowerShell
+  windows to keep open, and the Claude CLI is found in `~\.local\bin` even
+  when the installer didn't add it to PATH.
+
 - **TrulyInbox for warmup.** Harvey now recommends TrulyInbox for warming and
   keeping sending mailboxes healthy, and reads it: `harvey trulyinbox connect`
   (or the new warmup step on the dashboard's setup checklist) checks a key and
